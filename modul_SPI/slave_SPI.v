@@ -13,12 +13,12 @@ module slave_SPI
 					  reg [7:0] data;
 					  reg [2:0] ctr;
 					  reg [1:0] state;
+					  reg ss_r;
 
 					  localparam reset_state=2'b00,
 									idle_state=2'b01,
 									running_state=2'b11;
 
-					  assign ss=(state==reset_state);
 					  assign irq=(busy==1'b1);
 
 					  always@(posedge sck) begin
@@ -39,7 +39,7 @@ module slave_SPI
 
 									data<=data_in;
 									miso<=data_in[0];
-									data={mosi,data_in[6:0]};									
+									data<={mosi,data_in[6:0]};									
 									ctr<=ctr+1'b1;
 									if(ctr==3'b111)
 									begin
@@ -52,9 +52,10 @@ module slave_SPI
 							default:state<=reset_state;
 
 						endcase
+						
 						end
 
-						always@(posedge sck)
+						always@(posedge sck) begin
 						if(rst)
 						begin
 						ctr<=3'b0;
@@ -62,5 +63,6 @@ module slave_SPI
 						state<=reset_state;
 						data_out<=8'b0;
 						end
+						else ss_r<=ss; end
 
 endmodule									

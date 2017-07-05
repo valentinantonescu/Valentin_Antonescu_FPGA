@@ -15,10 +15,11 @@ module master_SPI
 					  reg [2:0] ctr;
 					  reg [1:0] state;
 					  reg [7:0] clk_div;
+					  reg ss_r;
 					  
 					  localparam reset_state=2'b00,
-									     idle_state=2'b01,
-									     running_state=2'b11;
+									 idle_state=2'b01,
+									 running_state=2'b11;
 
 					  always@(posedge clk)
 					  begin
@@ -27,7 +28,6 @@ module master_SPI
 					  
 					  assign sck=clk_div[clk_sel];			
 					  assign busy=(state!=reset_state);
-					  assign ss=(state==reset_state);
 					  
 					  always@(posedge sck) begin
 	
@@ -47,7 +47,7 @@ module master_SPI
 									
 									data<=data_in;
 									mosi<=data_in[7];
-									data={data_in[6:0],miso};									
+									data<={data_in[6:0],miso};									
 									ctr<=ctr+1'b1;
 									if(ctr==3'b111)
 									begin
@@ -63,14 +63,14 @@ module master_SPI
 						
 						end
 						
-						always@(posedge clk)
+						always@(posedge sck) begin
 						if(rst)
 						begin
 						ctr<=3'b0;
-						data<=8'b0;
 						state<=reset_state;
 						data_out<=8'b0;
 						clk_div<=8'b0;
 						end
+						else ss_r<=ss; end
 						
 endmodule
