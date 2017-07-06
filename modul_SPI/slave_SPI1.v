@@ -12,7 +12,7 @@ module slave_SPI1
 					  
 					  reg [7:0] data, data_out_r;
 					  reg mosi_r, miso_r, clk_g, irq;
-					  reg [2:0] ctr_r, ctr_q, ctr;
+					  reg [2:0] ctr_r, ctr;
 					  reg [1:0] state;
 					  
 					  assign busy=(state!=reset_state);
@@ -22,13 +22,13 @@ module slave_SPI1
 									 idle_state=2'b01,
 									 running_state=2'b11;
 					  
-					  always@(*) begin miso_r=miso;
+					  always@(state) begin miso_r=miso;
 											 mosi_r=mosi;
 											 data_out_r=data_out;
 											 ctr_r=ctr;
 											 clk_g=clk;
 											 irq=busy;
-									 end
+											end
 					  
 					  always@(posedge clk) begin
 					  
@@ -49,12 +49,11 @@ module slave_SPI1
 					  
 					  running_state:
 									begin
-									if(ctr==3'h0)
+									if(ctr==3'h7)
 									begin
 									state<=idle_state;
 									data_out_r<=data;
-									ctr<=3'h7;
-									ctr_q<=3'h0;
+									ctr<=3'h0;
 									end
 									if(rst) state<=reset_state;
 									end
@@ -63,23 +62,24 @@ module slave_SPI1
 						
 						endcase  end
 						
-						always@(state) begin
+						always@(posedge clk) begin
 						
 						case(state)
 						
 						running_state: begin
-									data=data_in;
-									miso_r=data_in[ctr];
-									data={mosi_r,data_in[6:0]};										
-									ctr_r=ctr_r-1'b1;
-									data[ctr-ctr_q]=mosi_r;
-									ctr_q=ctr_q+1'b1;
-									data_out_r=data;
+									
+									miso_r<=data_in[7];
+									data<={mosi_r,data_in[6:0]};										
+									ctr_r<=ctr_r+1'b1;
+									data[0]<=mosi_r;
+									data_out_r<=data;
 									end
 									
-						idle_state: data_out_r=8'h0;
+						idle_state: begin
+										data<=data_in;
+										end
 						
-						reset_state: data_out_r=8'h0;
+						reset_state: data_out_r<=8'h0;
 						
 						endcase  end
 endmodule
