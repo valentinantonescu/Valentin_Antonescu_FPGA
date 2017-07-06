@@ -15,10 +15,11 @@ module master_SPI1
 					  
 					  reg [7:0] data, data_out_r;
 					  reg mosi_r, miso_r, sck_r, sck_g, ss_r;
-					  reg [2:0] ctr, ctr_r;
+					  reg [2:0] ctr_r, ctr_q, ctr;
 					  reg [1:0] state;
 					  reg [7:0] clk_div;
 					  reg [3:0] addr_r;
+					  
 					  
 					  assign busy=(state!=reset_state);
 					  assign ss=(state==reset_state);
@@ -35,8 +36,8 @@ module master_SPI1
 					  
 					  always@(*) begin miso_r=miso;
 											 mosi_r=mosi;
-											 ctr_r=ctr;
 											 data_out_r=data_out;
+											 ctr_r=ctr;
 											 sck_r=sck;
 											 sck_g=sck;
 											 addr_r=addr;
@@ -60,12 +61,12 @@ module master_SPI1
 					  
 					  running_state:
 									begin
-									
-									if(ctr==3'b111)
+									if(ctr==3'h0)
 									begin
 									state<=idle_state;
 									data_out_r<=data;
-									ctr_r<=3'h0;
+									ctr<=3'h7;
+									ctr_q<=3'h0;
 									end
 									if(rst) state<=reset_state;
 									end
@@ -80,12 +81,12 @@ module master_SPI1
 						
 						running_state: begin
 									data=data_in;
-									mosi_r=data_in[7];
+									mosi_r=data_in[ctr];
 									data={data_in[6:0],miso_r};									
-									ctr=ctr+1'b1;
+									ctr_r=ctr_r-1'b1;
+									data[ctr_r-ctr_q]=miso_r;
+									ctr_q=ctr_q+1'b1;
 									data_out_r=data;
-									miso_r=miso;
-									mosi_r=mosi;
 									end
 									
 						idle_state: data_out_r=8'h0;
