@@ -22,15 +22,17 @@ module slave_SPI2	(input clk,
 						 
 						 case(state)
 						 
-						 reset_state: if(~rst&&(ss==1'bx)) state<=idle_state;
+						 reset_state: if(~rst) state<=idle_state;
 						 else state<=reset_state;
 						 
-						 idle_state: if(~en&&~ss) state<=running_state;
+						 idle_state: begin
+						 ctr<=3'h0;
+						 if(~en) state<=running_state;
 						 else state<=idle_state;
+						 end
 						 
 						 running_state: begin
 						 if(ctr==3'h7) begin
-						 ctr<=3'h0;
 						 state<=idle_state;
 						 end
 						 else begin
@@ -48,7 +50,6 @@ module slave_SPI2	(input clk,
 						 
 						 reset_state: begin
 										  busy<=1;
-										  miso<=1'bx;
 										  data_out<=8'h0;
 										  end
 										  
@@ -58,14 +59,17 @@ module slave_SPI2	(input clk,
 										 end
 										 
 						 running_state: begin
+											 if(~ss)
+											 begin
 											 busy<=1;
 											 miso<=data_in[7];
 											 data<={data_in[6:0], mosi};
 											 data_out<=data;
 											 end
-											 
+											 end
+
 					    endcase
 						 end
-						 
+
 endmodule
 						

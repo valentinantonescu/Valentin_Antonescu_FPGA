@@ -25,12 +25,14 @@ module master_SPI2(input clk,
 						 reset_state: if(~rst) state<=idle_state;
 						 else state<=reset_state;
 						 
-						 idle_state: if(~en) state<=running_state;
+						 idle_state: begin
+						 ctr<=3'h0;
+						 if(~en) state<=running_state;
 						 else state<=idle_state;
+						 end
 						 
 						 running_state: begin
 						 if(ctr==3'h7) begin
-						 ctr<=3'h0;
 						 state<=idle_state;
 						 end
 						 else begin
@@ -49,7 +51,6 @@ module master_SPI2(input clk,
 						 reset_state: begin
 										  ss<=1;
 										  busy<=1;
-										  mosi<=1'bx;
 										  data_out<=8'h0;
 										  end
 										  

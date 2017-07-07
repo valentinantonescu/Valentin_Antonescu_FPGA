@@ -1,7 +1,7 @@
 module clk_gen(input en,
 					input clk,
 					input [2:0] clk_sel,
-					output sck);
+					output reg sck);
 					
 					reg [7:0] cnt;
 					
@@ -11,7 +11,8 @@ module clk_gen(input en,
 					cnt<=cnt+1'b1;
 					end
 					
-					assign sck=cnt[clk_sel];
+					always@(clk)
+					sck=cnt[clk_sel];
 					
 					endmodule
 					
