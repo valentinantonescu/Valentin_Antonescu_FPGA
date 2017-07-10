@@ -20,7 +20,7 @@ module top
 			 
 			master_SPI2 master(.data_in(data_in_m),
 									.data_out(data_out_m),
-									.clk(clk),
+									.clk(sck),
 									.busy(busy),
 									.en(en_ms),
 									.cpol(cpol),
@@ -32,7 +32,7 @@ module top
 
 			slave_SPI2 slave(.data_in(data_in_s),
 								 .data_out(data_out_s),
-								 .clk(clk),
+								 .clk(sck),
 								 .busy(busy),
 								 .ss(w_ss),
 								 .en(en_ms),

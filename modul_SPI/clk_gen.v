@@ -12,7 +12,7 @@ module clk_gen(input en,
 					end
 					
 					always@(clk)
-					sck=cnt[clk_sel];
+					sck<=cnt[clk_sel];
 					
 					endmodule
 					

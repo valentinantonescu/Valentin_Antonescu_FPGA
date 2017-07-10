@@ -11,7 +11,7 @@ module slave_SPI2	(input clk,
 						 output reg [7:0] data_out);
 						 
 						 reg [1:0] state;
-						 reg [2:0] ctr;
+						 reg [2:0] ctr=0;
 						 reg [7:0] data;
 						 
 						 localparam reset_state=2'b01,
@@ -22,23 +22,35 @@ module slave_SPI2	(input clk,
 						 
 						 case(state)
 						 
-						 reset_state: if(~rst) state<=idle_state;
-						 else state<=reset_state;
+						 reset_state:
+							if(~rst)
+								state<=idle_state;
+							else
+								state<=reset_state;
 						 
-						 idle_state: begin
-						 ctr<=3'h0;
-						 if(~en) state<=running_state;
-						 else state<=idle_state;
-						 end
+						 idle_state:
+						 begin
 						 
-						 running_state: begin
-						 if(ctr==3'h7) begin
-						 state<=idle_state;
-						 end
-						 else begin
+							ctr<=0;
+							if(~en)
 								state<=running_state;
-								ctr<=ctr+1'b1;
-								end
+							else
+								state<=idle_state;
+						 end
+						 
+						 running_state:
+						 begin
+						
+							if(ctr==7)
+							begin
+								state<=idle_state;
+							end
+						 else
+							begin
+						 
+								state<=running_state;
+								ctr<=ctr+1;
+							end
 						 end
 						 
 						 endcase
