@@ -14,9 +14,9 @@ module slave_SPI2	(input clk,
 						 reg [2:0] ctr=0;
 						 reg [7:0] data;
 						 
-						 localparam reset_state=2'b01,
-										idle_state=2'b10,
-										running_state=2'b11;
+						 parameter reset_state=2'b01,
+									  idle_state=2'b10,
+									  running_state=2'b11;
 										
 						 always@(posedge clk) begin
 						 
@@ -75,7 +75,7 @@ module slave_SPI2	(input clk,
 											 begin
 											 busy<=1;
 											 miso<=data_in[7];
-											 data<={data_in[6:0], mosi};
+											 data<={data[6:0], mosi};
 											 data_out<=data;
 											 end
 											 end

@@ -9,25 +9,25 @@ module master_SPI2(input clk,
 						 output reg busy,
 						 output reg ss,
 						 output reg [7:0] data_out);
-						 
+
 						 reg [1:0] state;
 						 reg [2:0] ctr=0;
 						 reg [7:0] data;
-						 
-						 localparam reset_state=2'b01,
-										idle_state=2'b10,
-										running_state=2'b11;
-										
+
+						 parameter reset_state=2'b01,
+									  idle_state=2'b10,
+									  running_state=2'b11;
+
 						 always@(posedge clk) begin
-						 
+
 						 case(state)
-						 
+
 						 reset_state:
 							if(~rst)
 								state<=idle_state;
 							else
 								state<=reset_state;
-						 
+
 						 idle_state:
 						 begin
 						 
@@ -37,13 +37,13 @@ module master_SPI2(input clk,
 							else
 								state<=idle_state;
 						 end
-						 
+
 						 running_state:
 						 begin
-						 
+
 							if(ctr==7)
 							begin
-							
+
 								state<=idle_state;
 							end
 							else
@@ -52,36 +52,36 @@ module master_SPI2(input clk,
 									ctr<=ctr+1;
 								end
 							end
-						 
+
 						 endcase
 						 end
-						 
+
 						 always@(posedge clk) begin
-						 
+
 						 case(state)
-						 
+
 						 reset_state: begin
 										  ss<=1;
 										  busy<=1;
 										  data_out<=0;
 										  end
-										  
+
 						 idle_state: begin
 									    ss<=0;
 										 busy<=0;
 										 data<=data_in;
 										 end
-										 
+
 						 running_state: begin
 											 ss<=0;
 											 busy<=1;
 											 mosi<=data_in[7];
-											 data<={data_in[6:0],miso};
+											 data<={data[6:0],miso};
 											 data_out<=data;
 											 end
-											 
+
 					    endcase
 						 end
-						 
+
 endmodule
 						

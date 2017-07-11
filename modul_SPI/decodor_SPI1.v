@@ -1,9 +1,9 @@
 module decodor_SPI1(input [3:0] in,
 					input enable,
 					output [15:0] out);
-					
+
 					reg [15:0] dec_out;
-					
+
 					always@(enable or in)
 					begin
 					dec_out=0;
