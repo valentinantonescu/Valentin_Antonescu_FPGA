@@ -3,9 +3,6 @@ module sync_VGA(input clk,
 			  output display_enable,
 			  output reg hsync=0,
 			  output reg vsync=0,
-			  //output reg [3:0] red,
-			  //output reg [3:0] green,
-			  //output reg [3:0] blue,
 			  output [9:0] x_pos,
 			  output [9:0] y_pos);
 			  
@@ -15,7 +12,7 @@ module sync_VGA(input clk,
 			  reg active_v;
 			  
 			  assign display_enable=(active_h && active_v);
-			  assign x_pos=display_enable?counter_h[9:0]:10'bz;
+			  assign x_pos=display_enable?counter_h[9:0]-1:10'bz;
 			  assign y_pos=display_enable?counter_v:10'bz;
 			  
 			  always@(posedge clk)
@@ -52,24 +49,6 @@ module sync_VGA(input clk,
 						counter_v<=0;
 						
 					end
-					
-					/*if(display_enable)
-					begin
-					
-						red<=4'b0000;
-						green<=4'b0000;
-						blue<=4'b1111;
-						
-					end
-					
-					else
-					begin
-					
-						red<=4'bzzzz;
-						green<=4'bzzzz;
-						blue<=4'bzzzz;
-						
-					end*/
 					
 					if(~rst)
 					begin

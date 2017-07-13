@@ -3,6 +3,8 @@ JedecChain;
 	FileRevision(JESD32A);
 	DefaultMfr(6E);
 
+	P ActionCode(Cfg)
+		Device PartName(EP2C20F484) Path("/home/student/Valentin_Antonescu_FPGA/modul_VGA/output_files/") File("modul_VGA.sof") MfrSpec(OpMask(1));
 
 ChainEnd;
 

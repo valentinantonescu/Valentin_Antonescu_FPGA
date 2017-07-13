@@ -7,8 +7,6 @@ module memorie(input clk,
 					inout [7:0] sram,
 					output reg [7:0] data_out_transcodor);
 					
-					//reg [2:0] counter=0;
-					
 					assign sram=(~wr_enable & rd_enable)?data_in:8'bz;
 					
 					always@(posedge clk)

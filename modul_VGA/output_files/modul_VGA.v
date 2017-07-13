@@ -3,66 +3,64 @@ module color_VGA(input clk,
 					  input [9:0] y_pos,
 					  input display_enable,
 					  input [7:0] data_in,
-					  output [7:0] data_out,
-					  input [17:0] addr,
+					  inout reg [7:0] data_sram_low,
+					  inout reg [7:0] data_sram_high,
+					  output [17:0] addr,
 					  input wr_enable,
 					  input rd_enable,
+					  output wr_enable_sram,
+					  output rd_enable_sram,
+					  output data_mask_sram_high,
+					  output data_mask_sram_low,
 					  output chip_enable,
-					  input data_mask,
-					  output [2:0] red,
-					  output [2:0] blue,
-					  output [1:0] green);
-					  
-					  reg [17:0] counter=0;
-					  reg [2:0] enable={wr_enable,rd_enable,data_mask};
-					  
-					  assign red=data_in[7:5];
-					  assign blue=data_in[4:2];
-					  assign green=data_in[1:0];
+					  output reg [2:0] red,
+					  output reg [2:0] blue,
+					  output reg [1:0] green);
+
+					  reg [18:0] counter=0;
+
+					  assign chip_enable=0;
+					  assign data_mask_sram_high=~counter[18];
+					  assign data_mask_sram_low=counter[18];
+					  assign wr_enable_sram=wr_enable;
+					  assign rd_enable_sram=rd_enable;
+					  assign addr=(10'd800*y_pos+x_pos);
 					  
 					  always@(posedge clk)
 					  begin
-					  
+							
 							counter<=counter+1;
-							case(enable)
 							
-							3'b100: begin
+							if(counter==19'd480000)
+								counter<=0;
 							
+							if(~rd_enable & wr_enable & (data_mask_sram_high==0))
+							begin
+;
+									red<=data_sram_high[7:5];
+									blue<=data_sram_high[4:2];
+									green<=data_sram_high[1:0];
 							
-								
-							end
-								
-							3'b101: begin
-							
-							
-								
-							end
-							
-							3'b010: begin
-								
-							
-								
 							end
 							
-							3'b011: begin
-							
-							
+							if(~rd_enable & wr_enable & (data_mask_sram_low==0))
+							begin
+									
+									red<=data_sram_low[7:5];
+									blue<=data_sram_low[4:2];
+									green<=data_sram_low[1:0];
 								
 							end
 							
-							endcase
-							
-							if(counter<=18'b7FFFF)
-								data_mask<=1;
-							else
-								data_mask<=0;
-								
-							
-								
-							
-								
-							
-								
+							if(~wr_enable & rd_enable & (data_mask_sram_high==0))
 
-					  
-					  
+									data_sram_high<=data_in;
+								
+							if(~wr_enable & rd_enable & (data_mask_sram_low==0))
+
+									data_sram_low<=data_in;
+
+						end
+						
+endmodule
+								  
