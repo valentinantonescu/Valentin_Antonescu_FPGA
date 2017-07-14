@@ -12,7 +12,7 @@ module sync_VGA(input clk,
 			  reg active_v;
 			  
 			  assign display_enable=(active_h && active_v);
-			  assign x_pos=display_enable?counter_h[9:0]-1:10'bz;
+			  assign x_pos=display_enable?counter_h[9:0]:10'bz;
 			  assign y_pos=display_enable?counter_v:10'bz;
 			  
 			  always@(posedge clk)

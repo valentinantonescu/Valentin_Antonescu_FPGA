@@ -18,7 +18,7 @@ module top(input clk,
 			  memorie memorie1(.clk(clk),
 									 .rd_enable(rd_enable),
 									 .wr_enable(wr_enable),
-									 .addr(addr[2:0]),
+									 .addr(addr),
 									 .data_in(data_in),
 									 .sram(sram),
 									 .data_out_transcodor(data_in_transcodor));
@@ -34,7 +34,6 @@ module top(input clk,
 				assign lb=0;
 				assign wr_enable_sram=wr_enable;
 				assign rd_enable_sram=rd_enable;
-				assign addr[17:3]=0;
 				assign useless_data=8'hz;
 											  
 endmodule
