@@ -1,11 +1,13 @@
 module snake_top(input start,
+					  input rst_game,
 					  input clk,
 					  input rst_ps2,
 					  input SCL,
 					  input SDA,
 					  output data_valid_ps2,
 					  output reg [3:0] red, green, blue,
-					  output hsync, vsync);
+					  output hsync, vsync,
+					  output [13:0] points_7seg);
 	
 	wire [9:0] x_pos;
 	wire [9:0] y_pos;
@@ -14,10 +16,11 @@ module snake_top(input start,
 	wire [9:0]random_x;
 	wire [8:0]random_y;
 	wire display_enable;
-	wire VGA_clk;
 	wire r;
 	wire g;
 	wire b;
+	wire VGA_clk;
+	wire update_clk;
 	wire [4:0] direction;
 	wire lethal, non_lethal;
 	reg bad_collision, good_collision, game_over;
@@ -30,9 +33,8 @@ module snake_top(input start,
 	reg [9:0] snake_head_y;
 	reg snake_head;
 	reg snake_body;
-	wire update_clk;
-	integer max_size = 16;
-	
+	wire [4:0] points;
+	reg [4:0] points_counter=0;
 
 	clk_VGA reduce1(clk, VGA_clk); 
 	update_clk update1(clk, update_clk);
@@ -42,14 +44,16 @@ module snake_top(input start,
 	modul_PS2 PS2(SCL, SDA, clk, rst_ps2, direction, data_valid_ps2);
 	
 	modul_random random1(VGA_clk, random_x, random_y);
+	
+	transcodor transcodor1(points, points_7seg);
 
 
 	always @(posedge VGA_clk)
 	begin
 	
-		border <= (((x_pos>=0) && (x_pos<6) || (x_pos>=635)
+		border <= (((x_pos>=0) && (x_pos<11) || (x_pos>=630)
 		&& (x_pos<641)) || ((y_pos>=0) &&
-		(y_pos<6) || (y_pos>=475) && (y_pos<481)));
+		(y_pos<11) || (y_pos>=470) && (y_pos<481)));
 		
 	end
 	
@@ -71,7 +75,8 @@ module snake_top(input start,
 		
 			if(good_collision)
 			begin
-			
+				
+				points_counter<=points_counter+1;
 				if((random_x<10) || (random_x>630) || (random_y<10) || (random_y>470))
 				begin
 				
@@ -126,17 +131,25 @@ module snake_top(input start,
 		if(start)
 		begin
 		
-			for(counter1 = 127; counter1 > 0; counter1 = counter1 - 1)
-			begin
-			
-				if(counter1 <= size - 1)
-				begin
-				
-					snake_x[counter1] = snake_x[counter1 - 1];
-					snake_y[counter1] = snake_y[counter1 - 1];
-					
-				end
-			end
+		if(~rst_game)
+		begin
+		
+			snake_x[0]=320;
+			snake_y[0]=240;
+		
+		end
+		
+//			for(counter1 = 127; counter1 > 0; counter1 = counter1 - 1)
+//			begin
+//			
+//				if(counter1 <= size - 1)
+//				begin
+//				
+//					snake_x[counter1] = snake_x[counter1 - 1];
+//					snake_y[counter1] = snake_y[counter1 - 1];
+//					
+//				end
+//			end
 			
 			case(direction)
 			
@@ -150,39 +163,42 @@ module snake_top(input start,
 		
 		else if(~start)
 		begin
-		
-			for(counter3 = 1; counter3 < 128; counter3 = counter3+1)
-			begin
-			
-				snake_x[counter3] = 700;
-				snake_y[counter3] = 500;
 				
-			end
+			snake_x[0]=320;
+			snake_y[0]=240;
+		
+//			for(counter3 = 1; counter3 < 128; counter3 = counter3+1)
+//			begin
+//			
+//				snake_x[counter3] = 700;
+//				snake_y[counter3] = 500;
+//				
+//			end
 		end
 	end
 	
 		
-	always@(posedge VGA_clk)
-	begin
-	
-		found = 0;
-		
-		for(counter2 = 1; counter2 < size; counter2 = counter2 + 1)
-		begin
-		
-			if(~found)
-			begin
-			
-				snake_body = ((x_pos > snake_x[counter2]
-				&& x_pos < snake_x[counter2]+10)
-				&& (y_pos > snake_y[counter2]
-				&& y_pos < snake_y[counter2]+10));
-				found = snake_body;
-				
-			end
-		end
-	end
-	
+//	always@(posedge VGA_clk)
+//	begin
+//	
+//		found = 0;
+//		
+//		for(counter2 = 1; counter2 < size; counter2 = counter2 + 1)
+//		begin
+//		
+//			if(~found)
+//			begin
+//			
+//				snake_body = ((x_pos > snake_x[counter2]
+//				&& x_pos < snake_x[counter2]+10)
+//				&& (y_pos > snake_y[counter2]
+//				&& y_pos < snake_y[counter2]+10));
+//				found = snake_body;
+//				
+//			end
+//		end
+//	end
+
 	always@(posedge VGA_clk)
 	begin	
 	
@@ -194,7 +210,7 @@ module snake_top(input start,
 	end
 		
 	assign lethal = border || snake_body;
-	assign non_lethal = snake_head && apple;
+	assign non_lethal = apple;
 	
 	always @(posedge VGA_clk)
 		if(non_lethal && snake_head)
@@ -223,7 +239,7 @@ module snake_top(input start,
 	assign r = (display_enable && (apple || game_over));
 	assign g = (display_enable && ((snake_head || snake_body) && ~game_over));
 	assign b = (display_enable && (border && ~game_over) );
-	
+
 	always@(posedge VGA_clk)
 	begin
 	
@@ -232,5 +248,7 @@ module snake_top(input start,
 		blue={4{b}};
 		
 	end 
+	
+	assign points=points_counter;
 
 endmodule

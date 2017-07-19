@@ -5,15 +5,15 @@ module VGA_sync(input VGA_clk,
 
 	reg hsync_reg, vsync_reg; 
 	
-	integer porchHF = 640; //start of horizntal front porch
-	integer syncH = 656;//start of horizontal sync
-	integer porchHB = 752; //start of horizontal back porch
-	integer maxH = 800; //total length of line.
+	integer porchHF = 640;
+	integer syncH = 656;
+	integer porchHB = 752;
+	integer maxH = 800;
 
-	integer porchVF = 480; //start of vertical front porch 
-	integer syncV = 490; //start of vertical sync
-	integer porchVB = 492; //start of vertical back porch
-	integer maxV = 525; //total rows. 
+	integer porchVF = 480;
+	integer syncV = 490;
+	integer porchVB = 492;
+	integer maxV = 525; 
 
 	always@(posedge VGA_clk)
 	begin
