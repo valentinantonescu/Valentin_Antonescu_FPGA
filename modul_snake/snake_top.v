@@ -1,10 +1,8 @@
 module snake_top(input start,
 					  input rst_game,
 					  input clk,
-					  input rst_ps2,
 					  input SCL,
 					  input SDA,
-					  output data_valid_ps2,
 					  output reg [3:0] red, green, blue,
 					  output hsync, vsync,
 					  output [13:0] points_7seg,
@@ -23,7 +21,7 @@ module snake_top(input start,
 	wire r;
 	wire g;
 	wire b;
-	
+	wire win;
 	wire VGA_clk;
 	wire update_clk;
 	
@@ -35,6 +33,7 @@ module snake_top(input start,
 	integer apple_count, counter1, counter2, counter3;
 	
 	reg [6:0] size;
+	reg [2:0] size_cnt;
 	reg [9:0] snake_x [0:127];
 	reg [8:0] snake_y [0:127];
 	reg [9:0] snake_head_x;
@@ -43,15 +42,15 @@ module snake_top(input start,
 	reg snake_body;
 	
 	wire [6:0] points;
-	reg points_change;
-	reg [6:0] points_counter=0;
+	assign points=size-1;
+	assign win=(points==63);
 
 	clk_VGA reduce1(clk, VGA_clk); 
 	update_clk update1(clk, points, update_clk);
 	
 	VGA_sync sync1(VGA_clk, x_pos, y_pos, display_enable, hsync, vsync);	
 	
-	modul_PS2 PS2(SCL, SDA, clk, rst_ps2, direction, data_valid_ps2);
+	modul_PS2 PS2(SCL, SDA, clk, direction);
 	
 	modul_random random1(VGA_clk, random_x, random_y);
 	
@@ -68,9 +67,6 @@ module snake_top(input start,
 	
 	always@(posedge VGA_clk)
 	begin
-		
-		if(~rst_game)
-			points_counter<=0;
 	
 		apple_count=apple_count+1;
 		
@@ -87,8 +83,6 @@ module snake_top(input start,
 		
 			if(good_collision)
 			begin
-				
-				points_counter<=points_counter+1;
 				
 				if((random_x<10) || (random_x>630) || (random_y<10) || (random_y>470))
 				begin
@@ -186,13 +180,13 @@ module snake_top(input start,
 			snake_x[0]=320;
 			snake_y[0]=240;
 		
-		for(counter3 = 1; counter3 < 128; counter3 = counter3+1)
+		for(counter3 = 1; counter3 < 127; counter3 = counter3+1)
 		begin
 		
 			snake_x[counter3] = 700;
 			snake_y[counter3] = 500;
 			
-		end
+			end
 		end
 	end
 	
@@ -237,7 +231,15 @@ module snake_top(input start,
 		begin
 		
 				good_collision<=1;
-				size<=size+1;
+				size_cnt<=size_cnt+1;
+				
+				if(size_cnt==3)
+				begin
+				
+					size<=size+1;
+					size_cnt<=0;
+					
+				end
 				
 		end
 		
@@ -257,7 +259,8 @@ module snake_top(input start,
 		else if(~start) game_over<=0;
 								
 	assign r=(display_enable && (apple || game_over));
-	assign g=(display_enable && ((snake_head || snake_body) && ~game_over));
+	assign g=(display_enable && ((snake_head || snake_body) && ~game_over)) ||
+				(display_enable && win);
 	assign b=(display_enable && (border && ~game_over) );
 
 	always@(posedge VGA_clk)
@@ -269,10 +272,6 @@ module snake_top(input start,
 		
 	end
 	
-	//always@(points_change)
-		//points_counter=points_counter+1;
-	
-	assign points=points_counter;
 	assign digit2=7'b1111111;
 	assign digit3=7'b1111111;
 
