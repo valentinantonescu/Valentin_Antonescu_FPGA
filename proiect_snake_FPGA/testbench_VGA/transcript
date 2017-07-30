@@ -1,0 +1,18 @@
+# Compile of VGA_sync.v was successful.
+# Compile of testbench_VGA.v was successful.
+# 2 compiles, 0 failed with no errors. 
+vsim -gui work.testbench_VGA
+# vsim -gui work.testbench_VGA 
+# Loading work.testbench_VGA
+# Loading work.VGA_sync
+add wave -position insertpoint  \
+sim:/testbench_VGA/VGA_clk \
+sim:/testbench_VGA/display_enable \
+sim:/testbench_VGA/hsync \
+sim:/testbench_VGA/vsync \
+sim:/testbench_VGA/x_pos \
+sim:/testbench_VGA/y_pos
+run -all
+# Break key hit 
+# Break in Module testbench_VGA at C:/altera/13.0sp1/testbench_VGA/testbench_VGA.v line 18
+write format wave -window .main_pane.wave.interior.cs.body.pw.wf C:/altera/13.0sp1/testbench_VGA/wave.do

@@ -1,0 +1,15 @@
+{C:/Users/Tyrion Lannister/Documents/GitHub/Valentin_Antonescu_FPGA-master/modul_snake/VGA_sync.v} {1 {vlog -work work {C:/Users/Tyrion Lannister/Documents/GitHub/Valentin_Antonescu_FPGA-master/modul_snake/VGA_sync.v}
+Model Technology ModelSim ALTERA vlog 10.1d Compiler 2012.11 Nov  2 2012
+-- Compiling module VGA_sync
+
+Top level modules:
+	VGA_sync
+
+} {} {}} C:/altera/13.0sp1/testbench_VGA/testbench_VGA.v {1 {vlog -work work C:/altera/13.0sp1/testbench_VGA/testbench_VGA.v
+Model Technology ModelSim ALTERA vlog 10.1d Compiler 2012.11 Nov  2 2012
+-- Compiling module testbench_VGA
+
+Top level modules:
+	testbench_VGA
+
+} {} {}}

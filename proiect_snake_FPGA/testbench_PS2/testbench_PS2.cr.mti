@@ -1,0 +1,15 @@
+C:/altera/13.0sp1/testbench_PS2/testbench_PS2.v {1 {vlog -work work C:/altera/13.0sp1/testbench_PS2/testbench_PS2.v
+Model Technology ModelSim ALTERA vlog 10.1d Compiler 2012.11 Nov  2 2012
+-- Compiling module testbench_PS2
+
+Top level modules:
+	testbench_PS2
+
+} {} {}} {C:/Users/Tyrion Lannister/Documents/GitHub/Valentin_Antonescu_FPGA-master/modul_snake/modul_PS2.v} {1 {vlog -work work {C:/Users/Tyrion Lannister/Documents/GitHub/Valentin_Antonescu_FPGA-master/modul_snake/modul_PS2.v}
+Model Technology ModelSim ALTERA vlog 10.1d Compiler 2012.11 Nov  2 2012
+-- Compiling module modul_PS2
+
+Top level modules:
+	modul_PS2
+
+} {} {}}
